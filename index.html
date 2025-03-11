@@ -63,17 +63,33 @@
     </div>
 
     <script>
-        function gerarImagens() {
-            gerarMockup('canvas1', 'mockup.png', 166, 75, 749, 757, 643, 543, 326, 330, 190, 905, 202, 1005);
-            gerarMockup('canvas2', 'mockup2.png', 166, 495, 749, 757, 643, 963, 326, 330, 190, 1325, 202, 1425);
-        }
-
+        // Função para formatar os preços com R$ e vírgula como separador decimal
         function formatarPreco(preco) {
+            // Converte a vírgula para ponto para operações internas
+            preco = preco.replace(',', '.');
+            // Converte o valor para número e depois formata para moeda
             const precoFormatado = new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
-            }).format(preco);
+            }).format(parseFloat(preco));
             return precoFormatado;
+        }
+
+        // Função para substituir o ponto por vírgula enquanto o usuário digita
+        function substituirPontoPorVirgula(event) {
+            let valor = event.target.value;
+            valor = valor.replace('.', ','); // Substitui ponto por vírgula
+            event.target.value = valor;
+        }
+
+        // Adicionando o evento de input para os campos de preço
+        document.getElementById("precoOriginal").addEventListener("input", substituirPontoPorVirgula);
+        document.getElementById("precoDesconto").addEventListener("input", substituirPontoPorVirgula);
+
+        // Função para gerar as imagens
+        function gerarImagens() {
+            gerarMockup('canvas1', 'mockup.png', 166, 75, 749, 757, 643, 543, 326, 330, 190, 905, 202, 1005);
+            gerarMockup('canvas2', 'mockup2.png', 166, 495, 749, 757, 643, 963, 326, 330, 190, 1325, 202, 1425);
         }
 
         function gerarMockup(canvasId, templateSrc, imgMaiorX, imgMaiorY, imgMaiorW, imgMaiorH, imgMenorX, imgMenorY, imgMenorW, imgMenorH, preco1X, preco1Y, preco2X, preco2Y) {
