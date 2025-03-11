@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Mockups</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 5px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .mockup-container {
+            background: #34495E;
+            padding: 5px;
+            border-radius: 5px;
+            width: 200px;
+        }
+        input, button {
+            margin: 2px;
+            padding: 3px;
+            font-size: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+        canvas {
+            background: white;
+            display: block;
+            margin: auto;
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h3>Gerador de Mockups</h3>
+    <input type="file" id="image1" accept="image/*"> 
+    <input type="file" id="image2" accept="image/*"> <br>
+    <input type="text" id="precoOriginal" placeholder="Preço Original"> 
+    <input type="text" id="precoDesconto" placeholder="Preço com Desconto"> <br>
+    <button onclick="gerarImagens()">Gerar Imagens</button>
+    
+    <div class="container">
+        <div class="mockup-container">
+            <h5>Mockup 1</h5>
+            <canvas id="canvas1" width="1080" height="1080"></canvas>
+        </div>
+        <div class="mockup-container">
+            <h5>Mockup 2</h5>
+            <canvas id="canvas2" width="1080" height="1920"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function gerarImagens() {
+            gerarMockup('canvas1', 'mockup.png', 166, 75, 749, 757, 643, 543, 326, 330, 190, 905, 202, 1005);
+            gerarMockup('canvas2', 'mockup2.png', 166, 495, 749, 757, 643, 963, 326, 330, 190, 1325, 202, 1425);
+        }
+
+        function gerarMockup(canvasId, templateSrc, imgMaiorX, imgMaiorY, imgMaiorW, imgMaiorH, imgMenorX, imgMenorY, imgMenorW, imgMenorH, preco1X, preco1Y, preco2X, preco2Y) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const image1 = document.getElementById("image1").files[0];
+            const image2 = document.getElementById("image2").files[0];
+
+            let imagensCarregadas = 0;
+
+            function verificarDesenho() {
+                imagensCarregadas++;
+                if (imagensCarregadas === (image1 && image2 ? 2 : 1)) {
+                    desenharMockup();
+                }
+            }
+
+            function desenharMockup() {
+                const template = new Image();
+                template.src = templateSrc;
+                template.onload = function() {
+                    ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
+                    desenharPrecos();
+                };
+            }
+
+            function desenharPrecos() {
+                ctx.fillStyle = "white";
+                ctx.font = "bold 38px Anton, sans-serif";
+                ctx.fillText(document.getElementById("precoOriginal").value || "R$ 00,00", preco1X, preco1Y);
+                ctx.font = "bold 68px Anton, sans-serif";
+                ctx.fillText(document.getElementById("precoDesconto").value || "R$ 00,00", preco2X, preco2Y);
+            }
+
+            if (image1 && image2) {
+                // Carrega primeiro a imagem maior
+                const imgMaior = new Image();
+                imgMaior.src = URL.createObjectURL(image1);
+                imgMaior.onload = function() {
+                    ctx.drawImage(imgMaior, imgMaiorX, imgMaiorY, imgMaiorW, imgMaiorH);
+
+                    // Depois carrega a imagem menor por cima
+                    const imgMenor = new Image();
+                    imgMenor.src = URL.createObjectURL(image2);
+                    imgMenor.onload = function() {
+                        ctx.drawImage(imgMenor, imgMenorX, imgMenorY, imgMenorW, imgMenorH);
+                        desenharMockup();
+                    };
+                };
+            } else if (image1) {
+                const imgMaior = new Image();
+                imgMaior.src = URL.createObjectURL(image1);
+                imgMaior.onload = function() {
+                    ctx.drawImage(imgMaior, imgMaiorX, imgMaiorY, imgMaiorW, imgMaiorH);
+                    desenharMockup();
+                };
+            } else if (image2) {
+                const imgMenor = new Image();
+                imgMenor.src = URL.createObjectURL(image2);
+                imgMenor.onload = function() {
+                    ctx.drawImage(imgMenor, imgMenorX, imgMenorY, imgMenorW, imgMenorH);
+                    desenharMockup();
+                };
+            } else {
+                desenharMockup();
+            }
+        }
+    </script>
+</body>
+</html>
