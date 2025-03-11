@@ -68,6 +68,14 @@
             gerarMockup('canvas2', 'mockup2.png', 166, 495, 749, 757, 643, 963, 326, 330, 190, 1325, 202, 1425);
         }
 
+        function formatarPreco(preco) {
+            const precoFormatado = new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(preco);
+            return precoFormatado;
+        }
+
         function gerarMockup(canvasId, templateSrc, imgMaiorX, imgMaiorY, imgMaiorW, imgMaiorH, imgMenorX, imgMenorY, imgMenorW, imgMenorH, preco1X, preco1Y, preco2X, preco2Y) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext("2d");
@@ -97,21 +105,20 @@
             function desenharPrecos() {
                 ctx.fillStyle = "white";
                 ctx.font = "bold 38px Anton, sans-serif";
-                ctx.fillText(document.getElementById("precoOriginal").value || "R$ 00,00", preco1X, preco1Y);
-                
-                // Adiciona a linha no preço original
-                if (document.getElementById("precoOriginal").value) {
-                    const linhaY = preco1Y - 10; // Ajuste a posição da linha conforme necessário
-                    ctx.beginPath();
-                    ctx.moveTo(preco1X - 20, linhaY); // A linha começa um pouco antes do texto
-                    ctx.lineTo(preco1X + 400, linhaY); // A linha vai até a direita
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = 'white'; // Cor da linha
-                    ctx.stroke();
-                }
+                // Desenhando o preço original com uma linha em cima
+                const precoOriginal = formatarPreco(document.getElementById("precoOriginal").value || "0");
+                ctx.fillText(precoOriginal, preco1X, preco1Y);
+
+                // Adicionando a linha sobre o preço original
+                ctx.beginPath();
+                ctx.moveTo(preco1X - 10, preco1Y - 20); // posição da linha
+                ctx.lineTo(preco1X + ctx.measureText(precoOriginal).width + 10, preco1Y - 20); // tamanho da linha
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = 'white'; // cor da linha
+                ctx.stroke();
 
                 ctx.font = "bold 68px Anton, sans-serif";
-                ctx.fillText(document.getElementById("precoDesconto").value || "R$ 00,00", preco2X, preco2Y);
+                ctx.fillText(formatarPreco(document.getElementById("precoDesconto").value || "0"), preco2X, preco2Y);
             }
 
             if (image1 && image2) {
