@@ -98,6 +98,18 @@
                 ctx.fillStyle = "white";
                 ctx.font = "bold 38px Anton, sans-serif";
                 ctx.fillText(document.getElementById("precoOriginal").value || "R$ 00,00", preco1X, preco1Y);
+                
+                // Adiciona a linha no preço original
+                if (document.getElementById("precoOriginal").value) {
+                    const linhaY = preco1Y - 10; // Ajuste a posição da linha conforme necessário
+                    ctx.beginPath();
+                    ctx.moveTo(preco1X - 20, linhaY); // A linha começa um pouco antes do texto
+                    ctx.lineTo(preco1X + 400, linhaY); // A linha vai até a direita
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = 'white'; // Cor da linha
+                    ctx.stroke();
+                }
+
                 ctx.font = "bold 68px Anton, sans-serif";
                 ctx.fillText(document.getElementById("precoDesconto").value || "R$ 00,00", preco2X, preco2Y);
             }
